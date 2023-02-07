@@ -8,6 +8,40 @@ You'll need to copy the `.env.example` file into `.env` and fill in the values f
 
 > Note: Everything below here was the default README when I created the project. There's helpful info so I'm leaving it.
 
+# Schema
+
+## Schedule
+
+Schedules define a particular recurring schedule of events (i.e. the first Wednesday of the month @ 7:30)
+
+Schedules have Events that are created a 1.5 months (?) in advance. (By a daily recurring job)
+
+> Enhancement: Notification preferences operate at the Schedule level allowing people to subscribe or unsubscribe from a paricular schedule. I.e. if they are busy every wedensday, they can choose to not be notified.
+
+## Event
+
+An event is a particular instance of a Schedule. Events have an absolute time and are the basis of Responses, and reminders.
+
+## Invitation
+
+N number of days before an event, all (active) users are sent an invitation to which they may respond. (These will be sent by a recurring job that runs at a particular time of day. Evening or morning perhaps?)
+
+Users can respond to a particular event indicating their intent to join, and (if they are coming) how many people they plan to bring.
+
+A Invitation can be in one of several states:
+- sent
+- responded_yes
+- responded_no
+- responded_maybe
+
+## Reminder
+
+Reminders are a concept but are not represented in the database. Everyone who responded yes or maybe gets a reminder the day before (or day of?) the Event reminding them. Those who responded Maybe are prompted to upgrade their response to a yes/no. (Again, a recurring job)
+
+# Other considerations
+
+- Avoidng double-sends with a simple lock?
+
 # Remix Indie Stack
 
 ![The Remix Indie Stack](https://repository-images.githubusercontent.com/465928257/a241fa49-bd4d-485a-a2a5-5cb8e4ee0abf)
