@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import addDays from 'date-fns/addDays'
+import { InviteStatus } from '~/models/invitation.server'
 
 const prisma = new PrismaClient();
 
@@ -39,6 +41,34 @@ async function seed() {
       userId: user.id,
     },
   });
+
+  const schedule = await prisma.schedule.create({
+    data: {
+      title: 'Front Street',
+      schedule: 'first-wednesdays',
+    }
+  })
+
+  const member = await prisma.member.create({
+    data: {
+      phoneNumber: '+15058143896',
+    }
+  })
+
+  const event = await prisma.event.create({
+    data: {
+      scheduleId: schedule.id,
+      dateTime: addDays(new Date(), 4)
+    }
+  })
+
+  await prisma.invitation.create({
+    data: {
+      eventId: event.id,
+      memberId: member.id,
+      status: InviteStatus.SENT
+    }
+  })
 
   console.log(`Database has been seeded. 🌱`);
 }

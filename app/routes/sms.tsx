@@ -15,7 +15,7 @@ export async function action({ request }: ActionArgs) {
 
     if(message && typeof message === 'string') {
         await client.messages.create({
-            to: '+15058143896',
+            to: '', // TODO
             from: '+18556439303',
             body: message,
         })

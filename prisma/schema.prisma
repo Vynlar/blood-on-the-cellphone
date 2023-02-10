@@ -14,8 +14,18 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password Password?
-  notes    Note[]
+  password   Password?
+  notes      Note[]
+}
+
+model Member {
+  id    String @id @default(cuid())
+  phoneNumber String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invitation Invitation[]
 }
 
 model Password {
@@ -35,4 +45,40 @@ model Note {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+}
+
+model Schedule {
+  id       String @id @default(cuid())
+  title    String
+  schedule String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  event     Event[]
+}
+
+model Event {
+  id String @id @default(cuid())
+  dateTime DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schedule   Schedule     @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  scheduleId String
+  invitation Invitation[]
+}
+
+model Invitation {
+  id     String @id @default(cuid())
+  status String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  eventId String
+
+  user   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  memberId String
 }
