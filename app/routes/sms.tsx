@@ -3,6 +3,7 @@ import { json, redirect } from "@remix-run/node";
 import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import * as React from "react";
 import makeTwilioClient from 'twilio'
+import { handleMessage } from "~/messages/router";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -12,7 +13,21 @@ const client = makeTwilioClient(accountSid, authToken);
 export async function action({ request }: ActionArgs) {
     const formData = await request.formData();
     const message = formData.get('message')
+    const fromNumber = formData.get('from')
 
+    if(fromNumber && typeof fromNumber === 'string' && message && typeof message === 'string') {
+        const { response } = await handleMessage(fromNumber, message)
+
+        return {
+            response
+        }
+    }
+
+    return {
+        response: 'Invalid request'
+    }
+
+    /*
     if(message && typeof message === 'string') {
         await client.messages.create({
             to: '', // TODO
@@ -30,15 +45,21 @@ export async function action({ request }: ActionArgs) {
             { status: 400 }
         );
     }
+    */
 }
 
 export default function SMSPage() {
     const actionData = useActionData<typeof action>()
 
     return <Form method="post">
+        <label htmlFor="from">From</label>
+        <input id='from' name='from' />
+
         <label htmlFor="message">Message</label>
         <input id='message' name='message' />
+
         <button type='submit'>Send</button>
-        Message: {actionData?.message}
+
+        {actionData?.response}
     </Form>
 }

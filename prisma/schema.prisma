@@ -21,6 +21,7 @@ model User {
 model Member {
   id    String @id @default(cuid())
   phoneNumber String @unique
+  name String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,7 +51,7 @@ model Note {
 model Schedule {
   id       String @id @default(cuid())
   title    String
-  schedule String
+  cadence String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

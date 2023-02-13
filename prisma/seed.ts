@@ -1,19 +1,18 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import addDays from 'date-fns/addDays'
-import { InviteStatus } from '~/models/invitation.server'
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "rachel@remix.run";
+  const email = "adrian@example.com";
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
+  const hashedPassword = await bcrypt.hash("password", 10);
 
   const user = await prisma.user.create({
     data: {
@@ -45,13 +44,14 @@ async function seed() {
   const schedule = await prisma.schedule.create({
     data: {
       title: 'Front Street',
-      schedule: 'first-wednesdays',
+      cadence: 'first-wednesdays',
     }
   })
 
   const member = await prisma.member.create({
     data: {
       phoneNumber: '+15058143896',
+      name: 'Adrian',
     }
   })
 
@@ -66,7 +66,7 @@ async function seed() {
     data: {
       eventId: event.id,
       memberId: member.id,
-      status: InviteStatus.SENT
+      status: 'SENT',
     }
   })
 
