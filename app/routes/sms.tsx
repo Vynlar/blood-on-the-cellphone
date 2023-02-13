@@ -1,16 +1,11 @@
-import { useLoaderData, Form, useActionData } from "@remix-run/react";
-import { json, redirect } from "@remix-run/node";
-import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import * as React from "react";
-import makeTwilioClient from 'twilio'
+import { Form, useActionData } from "@remix-run/react";
+import type { ActionArgs } from "@remix-run/node";
 import { handleMessage } from "~/messages/router";
-
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const client = makeTwilioClient(accountSid, authToken);
-
+import { requireUserId } from "~/session.server";
 
 export async function action({ request }: ActionArgs) {
+    await requireUserId(request)
     const formData = await request.formData();
     const message = formData.get('message')
     const fromNumber = formData.get('from')
@@ -26,34 +21,18 @@ export async function action({ request }: ActionArgs) {
     return {
         response: 'Invalid request'
     }
-
-    /*
-    if(message && typeof message === 'string') {
-        await client.messages.create({
-            to: '', // TODO
-            from: '+18556439303',
-            body: message,
-        })
-
-        return json(
-            { message: "Sent!" },
-            { status: 200 }
-        );
-    } else {
-        return json(
-            { message: "You must include a message." },
-            { status: 400 }
-        );
-    }
-    */
 }
 
 export default function SMSPage() {
     const actionData = useActionData<typeof action>()
 
     return <Form method="post">
+        <h2>Demo SMS page</h2>
+        <p>Use this page to test our SMS functionality without actually having to use
+            a phone or send any texts.</p>
+
         <label htmlFor="from">From</label>
-        <input id='from' name='from' />
+        <input id='from' name='from' defaultValue='+15058143896' />
 
         <label htmlFor="message">Message</label>
         <input id='message' name='message' />

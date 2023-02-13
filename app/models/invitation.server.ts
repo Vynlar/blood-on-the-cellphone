@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import type { Invitation, Member } from "@prisma/client";
+import type { Invitation } from "@prisma/client";
 
 export type { Invitation  } from "@prisma/client";
 
@@ -23,6 +23,18 @@ export async function recordResponse({ invitationId, response }: {
     where: { id: invitationId },
     data: {
       status: response,
+    }
+  })
+}
+
+export async function recordGuests({ invitationId, numGuests }: {
+  invitationId: Invitation['id'],
+  numGuests: number
+}) {
+  return prisma.invitation.update({
+    where: { id: invitationId },
+    data: {
+      guests: numGuests,
     }
   })
 }

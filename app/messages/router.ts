@@ -1,4 +1,4 @@
-import { recordResponse } from '~/models/invitation.server'
+import { recordGuests, recordResponse } from '~/models/invitation.server'
 import { getLatestInvitation, getMemberByPhoneNumber } from '~/models/member.server'
 
 export async function handleMessage(fromNumber: string, message: string) {
@@ -13,34 +13,59 @@ export async function handleMessage(fromNumber: string, message: string) {
     const latestInvite = await getLatestInvitation(member.id)
 
     if(latestInvite) {
-        switch(message) {
-            case 'YES': {
-                await recordResponse({ invitationId: latestInvite.id, response: 'RESPONDED_YES' })
-                return {
-                    response: 'We look forward to seeing you!'
+        if(latestInvite.status === 'SENT') {
+            switch(message) {
+                case 'YES': {
+                    await recordResponse({ invitationId: latestInvite.id, response: 'RESPONDED_YES' })
+                    return {
+                        response: 'We look forward to seeing you! If you are bringing guests, please respond with the number of guests you plan to bring.'
+                    }
+                }
+                case 'NO': {
+                    await recordResponse({ invitationId: latestInvite.id, response: 'RESPONDED_NO' })
+                    return {
+                        response: "Shucks, we'll catch you next time."
+                    }
+                }
+                case 'MAYBE': {
+                    await recordResponse({ invitationId: latestInvite.id, response: 'RESPONDED_NO' })
+                    return {
+                        response: "We'll follow up with you in a few days."
+                    }
+                }
+                default: {
+                    return {
+                        response: 'Please respond with YES, NO, or MAYBE'
+                    }
                 }
             }
-            case 'NO': {
-                await recordResponse({ invitationId: latestInvite.id, response: 'RESPONDED_NO' })
+        } else if(latestInvite.status === 'RESPONDED_YES' && latestInvite.guests === null) {
+            let numGuests: number
+            try {
+                numGuests = parseInt(message)
+            } catch(e) {
                 return {
-                    response: "Shucks, we'll catch you next time."
+                    response: "Please type a number between 1-10"
                 }
             }
-            case 'MAYBE': {
-                await recordResponse({ invitationId: latestInvite.id, response: 'RESPONDED_NO' })
+
+            if(numGuests < 0) {
                 return {
-                    response: "We'll follow up with you in a few days."
+                    response: "You can't bring negative guests, silly!"
                 }
-            }
-            default: {
+            } else if(numGuests > 10) {
                 return {
-                    response: 'Please respond with YES, NO, or MAYBE'
+                    response: "Wow you have a lot of friends. Please type a number from 1-10."
+                }
+            } else {
+                await recordGuests({ invitationId: latestInvite.id, numGuests })
+                return {
+                    response: "Thanks for letting us know about your guests."
                 }
             }
         }
-    } else {
-        return {
-            response: 'Not sure what you are asking for...'
-        }
+    }
+    return {
+        response: 'Not sure what you are asking for...'
     }
 }
