@@ -1,6 +1,7 @@
 import { prisma } from "~/db.server";
 import type { MembershipRequest } from "@prisma/client";
 import invariant from "tiny-invariant";
+import { sendMessage } from "~/messages/client";
 
 export type { MembershipRequest } from "@prisma/client";
 
@@ -20,6 +21,8 @@ export async function approveMembershipRequest(request: MembershipRequest) {
             where: { id: request.id }
         })
     ])
+
+    await sendMessage(member.phoneNumber, "Your request has been approved. You will receive information about upcoming events.")
 
     return member
 }
