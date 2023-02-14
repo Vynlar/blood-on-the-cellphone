@@ -1,12 +1,25 @@
 import { recordGuests, recordResponse } from '~/models/invitation.server'
 import { getLatestInvitation, getMemberByPhoneNumber } from '~/models/member.server'
+import { getRequestByPhoneNumber, upsertMembershipRequest } from '~/models/membership_request.server'
 
 export async function handleMessage(fromNumber: string, message: string) {
     const member = await getMemberByPhoneNumber(fromNumber)
 
     if(!member) {
+        const membershipRequest = await getRequestByPhoneNumber(fromNumber)
+        if(!membershipRequest) {
+            // Brand new person
+
+            await upsertMembershipRequest(fromNumber)
+            return {
+                response: "Welcome! Respond with your name to request membership."
+            }
+        }
+
+        const name = message.trim()
+        await upsertMembershipRequest(fromNumber, name)
         return {
-            response: "Please contact a manager of this group to register."
+            response: `Hello, ${name}. A request has been sent and you will be notified when it is approved. If you want to change your name, simply sent another message and we will update it.`
         }
     }
 

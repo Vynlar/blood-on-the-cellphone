@@ -84,3 +84,12 @@ model Invitation {
   user     Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   memberId String
 }
+
+model MembershipRequest {
+  id          String @id @default(cuid())
+  phoneNumber String @unique
+  name        String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
