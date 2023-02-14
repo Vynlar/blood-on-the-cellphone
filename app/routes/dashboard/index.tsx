@@ -1,21 +1,24 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { requireUserId } from "~/session.server";
 import { json, redirect } from "@remix-run/node";
 import { getAllSchedules } from "~/models/schedule.server";
 import { getAllInvitations } from "~/models/invitation.server";
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { countMembershipRequests } from "~/models/membership_request.server";
 
 export async function loader({ request }: LoaderArgs) {
     await requireUserId(request);
 
     const schedules = await getAllSchedules()
     const invitations = await getAllInvitations()
+    const membershipRequestCount = await countMembershipRequests()
 
     return json({
         schedules,
-        invitations
+        invitations,
+        membershipRequestCount
     })
 }
 
@@ -30,9 +33,7 @@ function formatStatus(status: string): string {
 }
 
 export default function DashboardPage() {
-    const { schedules, invitations } = useLoaderData<typeof loader>()
-
-    console.log(invitations)
+    const { schedules, invitations, membershipRequestCount } = useLoaderData<typeof loader>()
 
     return <div className="space-y-8">
         <div className='max-w-screen-md mx-auto mt-8 space-y-4'>
@@ -61,6 +62,11 @@ export default function DashboardPage() {
                     </li>
                 ))}
             </ul>
+
+            {membershipRequestCount && (
+                <Link className="text-blue-600 underline" to='/requests'>Review {membershipRequestCount} membership requests</Link>
+            )}
         </div>
+
     </div>
 }

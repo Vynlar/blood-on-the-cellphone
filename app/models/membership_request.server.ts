@@ -12,24 +12,34 @@ export async function getMembershipRequest({ id }: { id: MembershipRequest['id']
 }
 
 export async function approveMembershipRequest(request: MembershipRequest) {
-    invariant(request.name, 'Only requests with names can be approved')
-    const [member] = await prisma.$transaction([
-        prisma.member.create({
+    return prisma.$transaction(async (prisma) => {
+        invariant(request.name, 'Only requests with names can be approved')
+
+        const member = await prisma.member.create({
             data: { phoneNumber: request.phoneNumber, name: request.name }
-        }),
-        prisma.membershipRequest.delete({
+        })
+
+        await prisma.membershipRequest.delete({
             where: { id: request.id }
         })
-    ])
 
-    await sendMessage(member.phoneNumber, "Your request has been approved. You will receive information about upcoming events.")
+        await sendMessage(request.phoneNumber, "Your request has been approved. You will receive information about upcoming events.")
 
-    return member
+        return member
+    })
 }
 
 export function getRequestByPhoneNumber(phoneNumber: string) {
     return prisma.membershipRequest.findFirst({
         where: { phoneNumber }
+    })
+}
+
+export function countMembershipRequests() {
+    return prisma.membershipRequest.count({
+        where: {
+            name: { not: null }
+        }
     })
 }
 
