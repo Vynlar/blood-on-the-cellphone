@@ -71,8 +71,8 @@ model Event {
 }
 
 model Invitation {
-  id          String @id @default(cuid())
-  status      String
+  id     String @id @default(cuid())
+  status String
   guests Int?
 
   createdAt DateTime @default(now())
@@ -86,8 +86,8 @@ model Invitation {
 }
 
 model MembershipRequest {
-  id          String @id @default(cuid())
-  phoneNumber String @unique
+  id          String  @id @default(cuid())
+  phoneNumber String  @unique
   name        String?
 
   createdAt DateTime @default(now())

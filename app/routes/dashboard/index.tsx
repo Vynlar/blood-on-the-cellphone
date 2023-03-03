@@ -4,69 +4,111 @@ import { requireUserId } from "~/session.server";
 import { json, redirect } from "@remix-run/node";
 import { getAllSchedules } from "~/models/schedule.server";
 import { getAllInvitations } from "~/models/invitation.server";
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
+import { getUpcomingEvents } from "~/models/event.server";
+import format from "date-fns/format";
+import parseISO from "date-fns/parseISO";
+import intlFormat from "date-fns/intlFormat";
 import { countMembershipRequests } from "~/models/membership_request.server";
 
 export async function loader({ request }: LoaderArgs) {
-    await requireUserId(request);
+  await requireUserId(request);
 
-    const schedules = await getAllSchedules()
-    const invitations = await getAllInvitations()
-    const membershipRequestCount = await countMembershipRequests()
+  const schedules = await getAllSchedules();
+  const invitations = await getAllInvitations();
+  const membershipRequestCount = await countMembershipRequests();
+  const upcomingEvents = await getUpcomingEvents();
 
-    return json({
-        schedules,
-        invitations,
-        membershipRequestCount
-    })
+  return json({
+    schedules,
+    invitations,
+    membershipRequestCount,
+    upcomingEvents,
+  });
 }
 
 function formatStatus(status: string): string {
-    switch(status) {
-            case 'SENT': return "hasn't responded";
-            case 'RESPONDED_YES': return "is coming";
-            case 'RESPONDED_NO': return "is not coming";
-            case 'RESPONDED_MAYBE': return "may be coming";
-    }
-    return ''
+  switch (status) {
+    case "SENT":
+      return "hasn't responded";
+    case "RESPONDED_YES":
+      return "is coming";
+    case "RESPONDED_NO":
+      return "is not coming";
+    case "RESPONDED_MAYBE":
+      return "may be coming";
+  }
+  return "";
 }
 
 export default function DashboardPage() {
-    const { schedules, invitations, membershipRequestCount } = useLoaderData<typeof loader>()
+  const { schedules, invitations, membershipRequestCount, upcomingEvents } =
+    useLoaderData<typeof loader>();
 
-    return <div className="space-y-8">
-        <div className='max-w-screen-md mx-auto mt-8 space-y-4'>
-            <h1 className="text-lg font-bold">Schedules</h1>
-            <ul>
-                {schedules.map(schedule => (
-                    <li key={schedule.id} className="border border-gray-200 rounded shadow p-4">{schedule.title} ({schedule.cadence})</li>
-                ))}
-            </ul>
-        </div>
+  return (
+    <div className="space-y-8">
+      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
+        <h1 className="text-lg font-bold">Schedules</h1>
+        <ul>
+          {schedules.map((schedule) => (
+            <li
+              key={schedule.id}
+              className="rounded border border-gray-200 p-4 shadow"
+            >
+              {schedule.title} ({schedule.cadence})
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        <div className='max-w-screen-md mx-auto mt-8 space-y-4'>
-            <h1 className="text-lg font-bold">Invitations</h1>
-            <ul>
-                {invitations.map(invitation => (
-                    <li
-                        key={invitation.id}
-                        className="border border-gray-200 rounded shadow p-4">
+      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
+        <h1 className="text-lg font-bold">Upcoming Events</h1>
+        <ul>
+          {upcomingEvents.map((event) => (
+            <li
+              key={event.id}
+              className="rounded border border-gray-200 p-4 shadow"
+            >
+              {event.schedule.title} @{" "}
+              {intlFormat(parseISO(event.dateTime), {
+                weekday: "short",
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+              })}
+            </li>
+          ))}
+        </ul>
+      </div>
 
-                        <strong>{invitation.user.name}</strong>{' '}
-                        is invited to{' '}
-                        <strong>{invitation.event.schedule.title}</strong>{' '}
-                            at{' '}
-                        <strong>{format(parseISO(invitation.event.dateTime), "h:mm b 'on' MMM dd")}</strong>{' '}
-                        and{' '} {formatStatus(invitation.status)}
-                    </li>
-                ))}
-            </ul>
+      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
+        <h1 className="text-lg font-bold">Invitations</h1>
+        <ul>
+          {invitations.map((invitation) => (
+            <li
+              key={invitation.id}
+              className="rounded border border-gray-200 p-4 shadow"
+            >
+              <strong>{invitation.user.name}</strong> is invited to{" "}
+              <strong>{invitation.event.schedule.title}</strong> at{" "}
+              <strong>
+                {format(
+                  parseISO(invitation.event.dateTime),
+                  "h:mm b 'on' MMM dd"
+                )}
+              </strong>{" "}
+              and {formatStatus(invitation.status)}
+            </li>
+          ))}
+        </ul>
 
-            {membershipRequestCount && (
-                <Link className="text-blue-600 underline" to='/requests'>Review {membershipRequestCount} membership requests</Link>
-            )}
-        </div>
-
+        {membershipRequestCount && (
+          <Link className="text-blue-600 underline" to="/requests">
+            Review {membershipRequestCount} membership requests
+          </Link>
+        )}
+      </div>
     </div>
+  );
 }
