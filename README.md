@@ -1,5 +1,14 @@
 # Blood on the Cellphone
 
+# TODO:
+
+[x] create list of upcoming events
+[x] make button to send invites
+[] invitation sending (currently working on this)
+-for each member: make invite and send a text
+[] handle response from members
+[] reminders (eventually)
+
 An SMS-based app that notifies people about upcoming games of `Blood on the Clocktower`, gets a headcount for each event, and reminds people that games are soon.
 
 ## Setup
@@ -29,6 +38,7 @@ N number of days before an event, all (active) users are sent an invitation to w
 Users can respond to a particular event indicating their intent to join, and (if they are coming) how many people they plan to bring.
 
 A Invitation can be in one of several states:
+
 - sent
 - responded_yes
 - responded_no

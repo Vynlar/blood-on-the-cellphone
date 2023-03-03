@@ -1,5 +1,5 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
-import { useLoaderData, Link } from "@remix-run/react";
+import { useLoaderData, Link, Form } from "@remix-run/react";
 import { requireUserId } from "~/session.server";
 import { json, redirect } from "@remix-run/node";
 import { getAllSchedules } from "~/models/schedule.server";
@@ -77,6 +77,14 @@ export default function DashboardPage() {
                 hour: "numeric",
                 minute: "numeric",
               })}
+              <Form action={`/event/${event.id}/sendInvites`} method="post">
+                <button
+                  className="rounded bg-green-600 p-2 font-bold text-white"
+                  type="submit"
+                >
+                  Send Invites
+                </button>
+              </Form>{" "}
             </li>
           ))}
         </ul>

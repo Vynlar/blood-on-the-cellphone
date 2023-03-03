@@ -11,7 +11,8 @@ export async function action({ request, params }: ActionArgs) {
         return json({ message: 'Method not supported' }, { status: 405 })
     }
 
-    invariant(params.requestId, 'requestId is required')
+    invariant(params.requestId, 'requestId is required');
+    
 
     const requestId = params.requestId
     const membershipRequest = await getMembershipRequest({ id: requestId })
