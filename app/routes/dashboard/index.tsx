@@ -49,97 +49,106 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="mx-auto mt-8 max-w-screen-md space-x-4 flex justify-end items-baseline">
-        <p>{user.email}</p>
-        <Form action="/logout" method="post">
-          <button
-            type="submit"
-            className="text-blue-500 underline"
-          >
-            Logout
-          </button>
-        </Form>
-      </div>
-
-      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
-        <h1 className="text-lg font-bold">Schedules</h1>
-        <ul>
-          {schedules.map((schedule) => (
-            <li
-              key={schedule.id}
-              className="rounded border border-gray-200 p-4 shadow"
+      <div className='mx-auto mt-8 max-w-screen-md space-y-8'>
+        <div className="space-x-4 flex justify-end items-baseline">
+          <p>{user.email}</p>
+          <Form action="/logout" method="post">
+            <button
+              type="submit"
+              className="text-blue-500 underline"
             >
-              {schedule.title} ({schedule.cadence})
-            </li>
-          ))}
-        </ul>
-      </div>
+              Logout
+            </button>
+          </Form>
+        </div>
 
-      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
-        <h1 className="text-lg font-bold">Upcoming Events</h1>
-        <ul>
-          {upcomingEvents.map((event) => (
-            <li
-              key={event.id}
-              className="rounded border border-gray-200 p-4 shadow flex justify-between items-center"
-            >
-              {event.schedule.title} @{" "}
-              {intlFormat(parseISO(event.dateTime), {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              })}
-              <Form action={`/event/${event.id}/sendInvites`} method="post" onSubmit={e => {
-                if (!confirm('Are you sure? This will send a text to every user!')) {
-                  e.preventDefault()
-                }
-              }}>
-                <button
-                  className="rounded bg-green-600 p-2 font-bold text-white"
-                  type="submit"
-                >
-                  Send Invites
-                </button>
-              </Form>{" "}
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="space-y-4">
+          <h1 className="text-lg font-bold">Schedules</h1>
+          <ul>
+            {schedules.map((schedule) => (
+              <li
+                key={schedule.id}
+                className="rounded border border-gray-200 p-4 shadow"
+              >
+                {schedule.title} ({schedule.cadence})
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
-        <h1 className="text-lg font-bold">Invitations</h1>
-        <ul>
-          {invitations.map((invitation) => (
-            <li
-              key={invitation.id}
-              className="rounded border border-gray-200 p-4 shadow"
-            >
-              <strong>{invitation.user.name}</strong> is invited to{" "}
-              <strong>{invitation.event.schedule.title}</strong> at{" "}
-              <strong>
-                {format(
-                  parseISO(invitation.event.dateTime),
-                  "h:mm b 'on' MMM dd"
-                )}
-              </strong>{" "}
-              and {formatStatus(invitation.status)}
-            </li>
-          ))}
-        </ul>
-      </div>
+        <div className="space-y-4">
+          <h1 className="text-lg font-bold">Upcoming Events</h1>
+          <ul>
+            {upcomingEvents.map((event) => (
+              <li
+                key={event.id}
+                className="rounded border border-gray-200 p-4 shadow flex justify-between items-center"
+              >
+                {event.schedule.title} @{" "}
+                {intlFormat(parseISO(event.dateTime), {
+                  weekday: "short",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
+                <Form action={`/event/${event.id}/sendInvites`} method="post" onSubmit={e => {
+                  if (!confirm('Are you sure? This will send a text to every user!')) {
+                    e.preventDefault()
+                  }
+                }}>
+                  <button
+                    className="rounded bg-green-600 p-2 font-bold text-white"
+                    type="submit"
+                  >
+                    Send Invites
+                  </button>
+                </Form>{" "}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
-        <h1 className="text-lg font-bold">Membership Requests</h1>
-        {membershipRequestCount > 0 ? (
-          <Link className="text-blue-600 underline" to="/requests">
-            Review {membershipRequestCount} requests
+        <div className="space-y-4">
+          <h1 className="text-lg font-bold">Invitations</h1>
+          <ul>
+            {invitations.map((invitation) => (
+              <li
+                key={invitation.id}
+                className="rounded border border-gray-200 p-4 shadow"
+              >
+                <strong>{invitation.user.name}</strong> is invited to{" "}
+                <strong>{invitation.event.schedule.title}</strong> at{" "}
+                <strong>
+                  {format(
+                    parseISO(invitation.event.dateTime),
+                    "h:mm b 'on' MMM dd"
+                  )}
+                </strong>{" "}
+                and {formatStatus(invitation.status)}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="space-y-4">
+          <h1 className="text-lg font-bold">Membership Requests</h1>
+          {membershipRequestCount > 0 ? (
+            <Link className="text-blue-600 underline" to="/requests">
+              Review {membershipRequestCount} requests
+            </Link>
+          ) : (
+            <p>There are no outstanding membership requests</p>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <h1 className="text-lg font-bold">Developer Utilities</h1>
+          <Link className="text-blue-600 underline" to="/sms">
+            Test SMS messages
           </Link>
-        ) : (
-          <p>There are no outstanding membership requests</p>
-        )}
+        </div>
       </div>
     </div>
   );
