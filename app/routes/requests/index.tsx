@@ -17,7 +17,7 @@ export default function RequestsIndexPage() {
   const data = useLoaderData<typeof loader>();
 
   return (
-    <div>
+    <div className="mx-auto mt-8 max-w-screen-md space-y-4">
       <h1 className="text-xl font-bold">Pending requests</h1>
       <ul>
         {data.membershipRequests?.map((request) => {

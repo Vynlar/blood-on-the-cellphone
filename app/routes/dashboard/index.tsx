@@ -66,7 +66,7 @@ export default function DashboardPage() {
           {upcomingEvents.map((event) => (
             <li
               key={event.id}
-              className="rounded border border-gray-200 p-4 shadow"
+              className="rounded border border-gray-200 p-4 shadow flex justify-between items-center"
             >
               {event.schedule.title} @{" "}
               {intlFormat(parseISO(event.dateTime), {
@@ -111,7 +111,7 @@ export default function DashboardPage() {
           ))}
         </ul>
 
-        {membershipRequestCount && (
+        {membershipRequestCount > 0 && (
           <Link className="text-blue-600 underline" to="/requests">
             Review {membershipRequestCount} membership requests
           </Link>
