@@ -1,5 +1,5 @@
 import type { LoaderArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Link, Form, useLoaderData } from "@remix-run/react";
 import { requireUserId } from "~/session.server";
 import { getAllMembershipRequests } from "~/models/membership_request.server";
 
@@ -18,6 +18,7 @@ export default function RequestsIndexPage() {
 
   return (
     <div className="mx-auto mt-8 max-w-screen-md space-y-4">
+      <Link className="text-blue-600 underline" to='/dashboard'>Back</Link>
       <h1 className="text-xl font-bold">Pending requests</h1>
       <ul>
         {data.membershipRequests?.map((request) => {

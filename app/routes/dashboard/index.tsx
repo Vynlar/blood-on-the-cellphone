@@ -110,14 +110,16 @@ export default function DashboardPage() {
             </li>
           ))}
         </ul>
+      </div>
 
-        {membershipRequestCount > 0 && (
-          <div>
-            <h1 className="text-lg font-bold">Membership Requests</h1>
-            <Link className="text-blue-600 underline" to="/requests">
-              Review {membershipRequestCount} requests
-            </Link>
-          </div>
+      <div className="mx-auto mt-8 max-w-screen-md space-y-4">
+        <h1 className="text-lg font-bold">Membership Requests</h1>
+        {membershipRequestCount > 0 ? (
+          <Link className="text-blue-600 underline" to="/requests">
+            Review {membershipRequestCount} requests
+          </Link>
+        ) : (
+          <p>There are no outstanding membership requests</p>
         )}
       </div>
     </div>
