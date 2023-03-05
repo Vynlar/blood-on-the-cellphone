@@ -112,9 +112,12 @@ export default function DashboardPage() {
         </ul>
 
         {membershipRequestCount > 0 && (
-          <Link className="text-blue-600 underline" to="/requests">
-            Review {membershipRequestCount} membership requests
-          </Link>
+          <div>
+            <h1 className="text-lg font-bold">Membership Requests</h1>
+            <Link className="text-blue-600 underline" to="/requests">
+              Review {membershipRequestCount} requests
+            </Link>
+          </div>
         )}
       </div>
     </div>

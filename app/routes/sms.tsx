@@ -32,22 +32,44 @@ export default function SMSPage() {
   const actionData = useActionData<typeof action>();
 
   return (
-    <Form method="post">
-      <h2>Demo SMS page</h2>
-      <p>
-        Use this page to test our SMS functionality without actually having to
-        use a phone or send any texts.
-      </p>
+    <div className="mx-auto mt-8 max-w-screen-md space-y-4">
+      <Form method="post" className="space-y-4">
+        <div>
+          <h2 className="font-bold">Demo SMS page</h2>
+          <p>
+            Use this page to test our SMS functionality without actually having
+            to use a phone or send any texts.
+          </p>
+        </div>
 
-      <label htmlFor="from">From</label>
-      <input id="from" name="from" defaultValue="+15058143896" />
+        <div className="flex flex-col">
+          <label htmlFor="from">From</label>
+          <input
+            className="rounded border border-gray-400 p-2"
+            id="from"
+            name="from"
+            defaultValue="+15058143896"
+          />
+        </div>
 
-      <label htmlFor="message">Message</label>
-      <input id="message" name="message" />
+        <div className="flex flex-col">
+          <label htmlFor="message">Message</label>
+          <input
+            className="rounded border border-gray-400 p-2"
+            id="message"
+            name="message"
+          />
+        </div>
 
-      <button type="submit">Send</button>
+        <button
+          className="rounded bg-green-600 p-2 font-bold text-white"
+          type="submit"
+        >
+          Send
+        </button>
 
-      {actionData?.response}
-    </Form>
+        <div>{actionData?.response}</div>
+      </Form>
+    </div>
   );
 }
