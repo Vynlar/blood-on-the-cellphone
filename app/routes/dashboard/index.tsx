@@ -9,6 +9,7 @@ import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
 import intlFormat from "date-fns/intlFormat";
 import { countMembershipRequests } from "~/models/membership_request.server";
+import { useUser } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
   await requireUserId(request);
@@ -44,8 +45,22 @@ export default function DashboardPage() {
   const { schedules, invitations, membershipRequestCount, upcomingEvents } =
     useLoaderData<typeof loader>();
 
+  const user = useUser()
+
   return (
     <div className="space-y-8">
+      <div className="mx-auto mt-8 max-w-screen-md space-x-4 flex justify-end items-baseline">
+        <p>{user.email}</p>
+        <Form action="/logout" method="post">
+          <button
+            type="submit"
+            className="text-blue-500 underline"
+          >
+            Logout
+          </button>
+        </Form>
+      </div>
+
       <div className="mx-auto mt-8 max-w-screen-md space-y-4">
         <h1 className="text-lg font-bold">Schedules</h1>
         <ul>
@@ -77,7 +92,11 @@ export default function DashboardPage() {
                 hour: "numeric",
                 minute: "numeric",
               })}
-              <Form action={`/event/${event.id}/sendInvites`} method="post">
+              <Form action={`/event/${event.id}/sendInvites`} method="post" onSubmit={e => {
+                if (!confirm('Are you sure? This will send a text to every user!')) {
+                  e.preventDefault()
+                }
+              }}>
                 <button
                   className="rounded bg-green-600 p-2 font-bold text-white"
                   type="submit"
