@@ -8,9 +8,10 @@ interface InvitationListItemProps {
     scheduleTitle: Schedule['title']
     dateTime: string
     status: Invitation['status']
+    guestCount: Invitation['guests']
 }
 
-export const InvitationListItem = ({ memberName, scheduleTitle, dateTime, status }: InvitationListItemProps) => {
+export const InvitationListItem = ({ memberName, scheduleTitle, dateTime, status, guestCount }: InvitationListItemProps) => {
     return <li
         className="rounded border border-gray-200 p-4 shadow"
     >
@@ -23,5 +24,8 @@ export const InvitationListItem = ({ memberName, scheduleTitle, dateTime, status
             )}
         </strong>{" "}
         and {formatStatus(status)}
+        {guestCount ? (
+            <> with <strong>{guestCount} guests</strong></>
+        ) : null}
     </li>
 }

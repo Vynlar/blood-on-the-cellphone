@@ -59,6 +59,7 @@ export default function EventDetailsPage() {
                         memberName={invitation.member.name}
                         scheduleTitle={event.schedule.title}
                         dateTime={event.dateTime}
+                        guestCount={invitation.guests}
                         status={invitation.status}
                     />
                 ))}

@@ -75,7 +75,7 @@ export default function DashboardPage() {
                 </div>
                 <div className='font-bold'>
                   <span className='text-green-600'>
-                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_YES').length}</span>/
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_YES').reduce((total, invite) => total + (invite.guests ?? 0) + 1, 0)}</span>/
                   <span className='text-red-600'>
                     {event.invitations.filter(invitation => invitation.status === 'RESPONDED_NO').length}</span>/
                   <span className='text-yellow-600'>
@@ -98,6 +98,7 @@ export default function DashboardPage() {
               memberName={invitation.member.name}
               scheduleTitle={invitation.event.schedule.title}
               dateTime={invitation.event.dateTime}
+              guestCount={invitation.guests}
               status={invitation.status} />
           ))}
         </ul>

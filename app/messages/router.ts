@@ -33,7 +33,7 @@ export async function handleMessage(fromNumber: string, message: string) {
 
   if (latestInvite) {
     if (latestInvite.status === "SENT") {
-      switch (message) {
+      switch (message.trim().toUpperCase()) {
         case "YES": {
           await recordResponse({
             invitationId: latestInvite.id,
@@ -41,7 +41,7 @@ export async function handleMessage(fromNumber: string, message: string) {
           });
           return {
             response:
-              "We look forward to seeing you! If you are bringing guests, please respond with the number of guests you plan to bring.",
+              "We look forward to seeing you! If you are bringing guests, please respond with the number of guests you plan to bring (excluding yourself).",
           };
         }
         case "NO": {
