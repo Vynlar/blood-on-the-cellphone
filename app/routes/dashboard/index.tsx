@@ -75,13 +75,17 @@ export default function DashboardPage() {
                 </div>
                 <div className='font-bold'>
                   <span className='text-green-600'>
-                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_YES').reduce((total, invite) => total + (invite.guests ?? 0) + 1, 0)}</span>/
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_YES').reduce((total, invite) => total + (invite.guests ?? 0) + 1, 0)}
+                  </span>/
                   <span className='text-red-600'>
-                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_NO').length}</span>/
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_NO').length}
+                  </span>/
                   <span className='text-yellow-600'>
-                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_MAYBE').length}</span>/
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_MAYBE').length}
+                  </span>/
                   <span>
-                    {event.invitations.filter(invitation => invitation.status === 'SENT').length}</span>
+                    {event.invitations.filter(invitation => invitation.status === 'SENT').length}
+                  </span>
                 </div>
               </div>
               <Link className='text-blue-600 underline' to={`/event/${event.id}`}>View details</Link>

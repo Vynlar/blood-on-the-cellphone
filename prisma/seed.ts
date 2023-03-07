@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import setHours from 'date-fns/setHours'
+import startOfHour from 'date-fns/startOfHour'
 import addDays from "date-fns/addDays";
 
 const prisma = new PrismaClient();
@@ -58,7 +60,7 @@ async function seed() {
   const event = await prisma.event.create({
     data: {
       scheduleId: schedule.id,
-      dateTime: addDays(new Date(), 4),
+      dateTime: setHours(startOfHour(addDays(new Date(), 4)), 12 + 7),
     },
   });
 
