@@ -6,7 +6,7 @@ export type { Invitation } from "@prisma/client";
 export async function getAllInvitations() {
   return prisma.invitation.findMany({
     include: {
-      user: { select: { id: true, name: true } },
+      member: { select: { id: true, name: true } },
       event: {
         include: {
           schedule: { select: { id: true, title: true } },
@@ -46,3 +46,5 @@ export async function recordGuests({
     },
   });
 }
+
+

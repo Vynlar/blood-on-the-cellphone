@@ -22,11 +22,12 @@ model Member {
   id          String @id @default(cuid())
   phoneNumber String @unique
   name        String
+  isActive    Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  invitation Invitation[]
+  invitations Invitation[]
 }
 
 model Password {
@@ -55,7 +56,7 @@ model Schedule {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  event     Event[]
+  events     Event[]
 }
 
 model Event {
@@ -67,7 +68,7 @@ model Event {
 
   schedule   Schedule     @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   scheduleId String
-  invitation Invitation[]
+  invitations Invitation[]
 }
 
 model Invitation {
@@ -81,7 +82,7 @@ model Invitation {
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   eventId String
 
-  user     Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  member     Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   memberId String
 }
 

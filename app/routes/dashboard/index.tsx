@@ -6,11 +6,11 @@ import { json } from "@remix-run/node";
 import { getAllSchedules } from "~/models/schedule.server";
 import { getAllInvitations } from "~/models/invitation.server";
 import { getUpcomingEvents } from "~/models/event.server";
-import format from "date-fns/format";
 import parseISO from "date-fns/parseISO";
 import intlFormat from "date-fns/intlFormat";
 import { countMembershipRequests } from "~/models/membership_request.server";
 import { useUser } from "~/utils";
+import { InvitationListItem } from "~/components/invitation_list_item";
 
 
 export async function loader({ request }: LoaderArgs) {
@@ -29,20 +29,6 @@ export async function loader({ request }: LoaderArgs) {
   });
 }
 
-function formatStatus(status: string): string {
-  switch (status) {
-    case "SENT":
-      return "hasn't responded";
-    case "RESPONDED_YES":
-      return "is coming";
-    case "RESPONDED_NO":
-      return "is not coming";
-    case "RESPONDED_MAYBE":
-      return "may be coming";
-  }
-  return "";
-}
-
 export default function DashboardPage() {
   const { schedules, invitations, membershipRequestCount, upcomingEvents } =
     useLoaderData<typeof loader>();
@@ -50,7 +36,7 @@ export default function DashboardPage() {
   const user = useUser()
 
   return (
-    <div className='mx-auto mt-8 max-w-screen-md space-y-12'>
+    <div className='mx-auto py-8 max-w-screen-md space-y-12'>
       <header className="flex justify-between">
         <h1 className='font-bold flex space-x-2 items-center'><FaMobileAlt /><span><span className='text-red-600'>Blood</span> on the Cellphone</span></h1>
 
@@ -61,13 +47,11 @@ export default function DashboardPage() {
               type="submit"
               className="text-blue-500 underline"
             >
-              Logout
+              Log out
             </button>
           </Form>
         </div>
       </header>
-
-
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold">Upcoming Events</h2>
@@ -77,27 +61,30 @@ export default function DashboardPage() {
               key={event.id}
               className="rounded border border-gray-200 p-4 shadow flex justify-between items-center"
             >
-              {event.schedule.title} @{" "}
-              {intlFormat(parseISO(event.dateTime), {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              })}
-              <Form action={`/event/${event.id}/sendInvites`} method="post" onSubmit={e => {
-                if (!confirm('Are you sure? This will send a text to every user!')) {
-                  e.preventDefault()
-                }
-              }}>
-                <button
-                  className="rounded bg-green-600 py-2 px-4 font-bold text-white"
-                  type="submit"
-                >
-                  Send Invites
-                </button>
-              </Form>{" "}
+              <div>
+                <div>
+                  {event.schedule.title} @{" "}
+                  {intlFormat(parseISO(event.dateTime), {
+                    weekday: "short",
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                  })}
+                </div>
+                <div className='font-bold'>
+                  <span className='text-green-600'>
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_YES').length}</span>/
+                  <span className='text-red-600'>
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_NO').length}</span>/
+                  <span className='text-yellow-600'>
+                    {event.invitations.filter(invitation => invitation.status === 'RESPONDED_MAYBE').length}</span>/
+                  <span>
+                    {event.invitations.filter(invitation => invitation.status === 'SENT').length}</span>
+                </div>
+              </div>
+              <Link className='text-blue-600 underline' to={`/event/${event.id}`}>View details</Link>
             </li>
           ))}
         </ul>
@@ -105,22 +92,13 @@ export default function DashboardPage() {
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold">Invitations</h2>
-        <ul>
+        <ul className='space-y-2'>
           {invitations.map((invitation) => (
-            <li
-              key={invitation.id}
-              className="rounded border border-gray-200 p-4 shadow"
-            >
-              <strong>{invitation.user.name}</strong> is invited to{" "}
-              <strong>{invitation.event.schedule.title}</strong> at{" "}
-              <strong>
-                {format(
-                  parseISO(invitation.event.dateTime),
-                  "h:mm b 'on' MMM dd"
-                )}
-              </strong>{" "}
-              and {formatStatus(invitation.status)}
-            </li>
+            <InvitationListItem
+              memberName={invitation.member.name}
+              scheduleTitle={invitation.event.schedule.title}
+              dateTime={invitation.event.dateTime}
+              status={invitation.status} />
           ))}
         </ul>
       </section>

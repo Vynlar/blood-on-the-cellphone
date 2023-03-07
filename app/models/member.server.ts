@@ -15,3 +15,7 @@ export async function getLatestInvitation(memberId: Member["id"]) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function getAllActiveMembers() {
+  return prisma.member.findMany()
+}
