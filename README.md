@@ -1,15 +1,29 @@
 # Blood on the Cellphone
 
-# TODO:
-
-[x] create list of upcoming events
-[x] make button to send invites
-[] invitation sending (currently working on this)
--for each member: make invite and send a text
-[] handle response from members
-[] reminders (eventually)
-
 An SMS-based app that notifies people about upcoming games of `Blood on the Clocktower`, gets a headcount for each event, and reminds people that games are soon.
+
+# TODO
+
+- [x] create list of upcoming events
+- [x] make button to send invites
+- [x] invitation sending (currently working on this)
+  - for each member: make invite and send a text
+- [x] handle response from members
+- [ ] let people change/reset their response to an invitation
+- [ ] reminders (eventually)
+- [ ] deploy this to a real server and test it out
+
+## Future feature ideas
+
+- Let members change their name
+- Let members unsubscribe/deactivate their account (and reactivate if they so choose)
+  - (Be sure we don't ever text an inactive user)
+- Auto-send invites a week before an event
+- When a new member is approved, automatically send them invitations for any upcoming games (that are within the valid invite-sending window)
+- Allow admins to manually send out updates to an event (time, place, other announcements)
+- A way to handle situation where we don't yet have enough players RSVP'd
+  - Plead people with reminders?
+  - Eventually cancel if there still not enough
 
 ## Setup
 
