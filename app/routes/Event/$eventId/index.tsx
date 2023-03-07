@@ -1,4 +1,4 @@
-import { useLoaderData, Link, Form } from "@remix-run/react";
+import { useLoaderData, Link, Form, useTransition } from "@remix-run/react";
 import { LoaderArgs, redirect } from "@remix-run/node";
 import { getEvent, getUninvitedMembers } from "~/models/event.server";
 import { InvitationListItem } from "~/components/invitation_list_item";
@@ -30,6 +30,7 @@ export async function loader({ params }: LoaderArgs) {
 
 export default function EventDetailsPage() {
     const { event, uninvitedMembers } = useLoaderData<typeof loader>()
+    const transition = useTransition()
 
     return <div className='mx-auto py-8 max-w-screen-md space-y-8'>
         <Link className="text-blue-600 underline" to='/dashboard'>Back</Link>
@@ -92,9 +93,12 @@ export default function EventDetailsPage() {
                     <button
                         aria-describedby="send-invites-description"
                         className="rounded bg-green-600 py-2 px-4 font-bold text-white"
+                        disabled={transition.state === 'submitting'}
                         type="submit"
                     >
-                        Send Invites
+                        {transition.state === 'submitting' ? (
+                            'Sending invites...'
+                        ) : ('Send Invites')}
                     </button>
                 </Form>
                 <span id="send-invites-description" className='text-sm italic text-gray-600'>
