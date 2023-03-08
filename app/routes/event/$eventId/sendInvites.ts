@@ -11,12 +11,12 @@ export async function action({ request, params }: ActionArgs) {
     return json({ message: "Method not supported" }, { status: 405 });
   }
 
-  const eventId = params['eventId']
+  const eventId = params["eventId"];
 
-  invariant(eventId, 'Event id is required')
+  invariant(eventId, "Event id is required");
 
-  const failures = await sendInvitations({ eventId })
-  console.log(failures)
+  const failures = await sendInvitations({ eventId });
+  console.log(failures);
 
-  return redirect('/event/' + eventId)
+  return redirect("/event/" + eventId);
 }

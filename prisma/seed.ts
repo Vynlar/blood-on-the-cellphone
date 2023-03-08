@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import setHours from 'date-fns/setHours'
-import startOfHour from 'date-fns/startOfHour'
+import setHours from "date-fns/setHours";
+import startOfHour from "date-fns/startOfHour";
 import addDays from "date-fns/addDays";
 
 const prisma = new PrismaClient();

@@ -17,5 +17,5 @@ export async function getLatestInvitation(memberId: Member["id"]) {
 }
 
 export async function getAllActiveMembers() {
-  return prisma.member.findMany()
+  return prisma.member.findMany();
 }

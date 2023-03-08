@@ -33,7 +33,9 @@ export default function SMSPage() {
 
   return (
     <div className="mx-auto mt-8 max-w-screen-md space-y-4">
-      <Link className="text-blue-600 underline" to='/dashboard'>Back</Link>
+      <Link className="text-blue-600 underline" to="/dashboard">
+        Back
+      </Link>
 
       <Form method="post" className="space-y-4">
         <div>
