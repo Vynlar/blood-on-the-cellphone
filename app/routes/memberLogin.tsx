@@ -15,7 +15,7 @@ export async function loader({ request }: LoaderArgs) {
         request,
         memberId: member.id,
         remember: true,
-        redirectTo: "/manage",
+        redirectTo: "/member",
       });
     }
   }
