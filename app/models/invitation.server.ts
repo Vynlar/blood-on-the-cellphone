@@ -17,6 +17,23 @@ export async function getAllInvitations() {
   });
 }
 
+export async function getInvitation(id: Invitation["id"] ){
+  return prisma.invitation.findUnique({
+    where: {id},
+    include: {
+      event: {
+        include: {
+          schedule: {
+            select: {
+              title: true
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
 export async function recordResponse({
   invitationId,
   response,

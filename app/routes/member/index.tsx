@@ -25,7 +25,7 @@ export async function loader({ request }: LoaderArgs) {
   };
 }
 
-export default function DashboardPage() {
+export default function MemberDashboard() {
   const { member, upcomingInvitations } = useLoaderData<typeof loader>();
 
   return (
@@ -58,7 +58,7 @@ export default function DashboardPage() {
             >
               <Link
                 className="text-blue-600 underline"
-                to={`editInvite/${invitation.id}`}
+                to={`invites/${invitation.id}`}
               >
                 <div>
                   {invitation.event.schedule.title} @{" "}
