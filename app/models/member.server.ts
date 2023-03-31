@@ -43,6 +43,7 @@ export async function getUpcomingInvitations(memberId: Member["id"]){
   })
 }
 
+
 export async function getAllActiveMembers() {
   return prisma.member.findMany();
 }
