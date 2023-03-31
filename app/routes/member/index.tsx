@@ -58,7 +58,7 @@ export default function DashboardPage() {
             >
               <Link
                 className="text-blue-600 underline"
-                to={`/editInvite/${invitation.id}`}
+                to={`editInvite/${invitation.id}`}
               >
                 <div>
                   {invitation.event.schedule.title} @{" "}
