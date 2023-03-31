@@ -19,10 +19,11 @@ model User {
 }
 
 model Member {
-  id          String @id @default(cuid())
-  phoneNumber String @unique
+  id          String  @id @default(cuid())
+  phoneNumber String  @unique
   name        String
   isActive    Boolean @default(true)
+  token       String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,7 +57,7 @@ model Schedule {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  events     Event[]
+  events    Event[]
 }
 
 model Event {
@@ -66,8 +67,8 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  schedule   Schedule     @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  scheduleId String
+  schedule    Schedule     @relation(fields: [scheduleId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  scheduleId  String
   invitations Invitation[]
 }
 
@@ -82,7 +83,7 @@ model Invitation {
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   eventId String
 
-  member     Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   memberId String
 }
 

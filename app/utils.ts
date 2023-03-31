@@ -1,5 +1,6 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
+import crypto from "crypto";
 
 import type { User } from "~/models/user.server";
 
@@ -68,4 +69,9 @@ export function useUser(): User {
 
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
+}
+
+export function generateToken(){
+  const length = 24;
+  return crypto.randomBytes(Math.ceil(length/2)).toString("hex");
 }

@@ -19,3 +19,14 @@ export async function getLatestInvitation(memberId: Member["id"]) {
 export async function getAllActiveMembers() {
   return prisma.member.findMany();
 }
+
+export async function getMemberById(id: Member["id"]){
+  return prisma.member.findUnique({where: {id}})
+}
+
+export async function getMemberByToken(token: string) {
+  return prisma.member.findFirst({
+    where: { token },
+  });
+}
+

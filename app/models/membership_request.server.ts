@@ -2,6 +2,7 @@ import { prisma } from "~/db.server";
 import type { MembershipRequest } from "@prisma/client";
 import invariant from "tiny-invariant";
 import { sendMessage } from "~/messages/client";
+import { generateToken } from "~/utils";
 
 export type { MembershipRequest } from "@prisma/client";
 
@@ -20,7 +21,7 @@ export async function approveMembershipRequest(request: MembershipRequest) {
     invariant(request.name, "Only requests with names can be approved");
 
     const member = await prisma.member.create({
-      data: { phoneNumber: request.phoneNumber, name: request.name },
+      data: { phoneNumber: request.phoneNumber, name: request.name, token: generateToken() },
     });
 
     await prisma.membershipRequest.delete({

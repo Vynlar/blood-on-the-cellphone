@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import setHours from "date-fns/setHours";
 import startOfHour from "date-fns/startOfHour";
 import addDays from "date-fns/addDays";
+import { generateToken } from "~/utils";
 
 const prisma = new PrismaClient();
 
@@ -54,6 +55,7 @@ async function seed() {
     data: {
       phoneNumber: "+15058143896",
       name: "Adrian",
+      token: generateToken()
     },
   });
 
