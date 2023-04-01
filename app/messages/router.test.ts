@@ -159,4 +159,21 @@ describe("existing member", () => {
     });
     expect(invite?.guests).toBe(5);
   });
+
+  it("the help command works", async () => {
+    const result = await handleMessage(phone, "help");
+    expect(result.response).toMatch(
+      /Respond with any of the following commands/i
+    );
+    expect(result.response).toMatch(/HELP/i);
+    expect(result.response).toMatch(/INVITATIONS/i);
+  });
+
+  it("the invitations command works", async () => {
+    const result = await handleMessage(phone, "invitations");
+    expect(result.response).toMatch(
+      /To view or update invitations and RSVPs, use this link/i
+    );
+    expect(result.response).toMatch(/\/memberLogin/i);
+  });
 });

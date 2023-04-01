@@ -29,6 +29,23 @@ export async function handleMessage(fromNumber: string, message: string) {
     };
   }
 
+  switch (message.trim().toLowerCase()) {
+    case "help":
+      return {
+        response:
+          "Respond with any of the following commands: HELP, INVITATIONS",
+      };
+
+    case "invitations":
+      return {
+        response:
+          "To view or update invitations and RSVPs, use this link: " +
+          process.env.HOST_NAME +
+          "/memberLogin?token=" +
+          member.token,
+      };
+  }
+
   const latestInvite = await getLatestInvitation(member.id);
 
   if (latestInvite) {
