@@ -17,21 +17,21 @@ export async function getAllInvitations() {
   });
 }
 
-export async function getInvitation(id: Invitation["id"] ){
+export async function getInvitation(id: Invitation["id"]) {
   return prisma.invitation.findUnique({
-    where: {id},
+    where: { id },
     include: {
       event: {
         include: {
           schedule: {
             select: {
-              title: true
-            }
-          }
-        }
-      }
-    }
-  })
+              title: true,
+            },
+          },
+        },
+      },
+    },
+  });
 }
 
 export async function recordResponse({
