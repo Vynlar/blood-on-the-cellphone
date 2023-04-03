@@ -9,7 +9,7 @@ import { getUpcomingEvents } from "~/models/event.server";
 import parseISO from "date-fns/parseISO";
 import intlFormat from "date-fns/intlFormat";
 import { countMembershipRequests } from "~/models/membership_request.server";
-import { useUser } from "~/utils";
+import { useUser, formatEventDateForList } from "~/utils";
 import { InvitationListItem } from "~/components/invitation_list_item";
 
 export async function loader({ request }: LoaderArgs) {
@@ -65,14 +65,7 @@ export default function DashboardPage() {
               <div>
                 <div>
                   {event.schedule.title} @{" "}
-                  {intlFormat(parseISO(event.dateTime), {
-                    weekday: "short",
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                  })}
+                  {formatEventDateForList(event.dateTime)}
                 </div>
                 <div className="font-bold">
                   <span className="text-green-600">

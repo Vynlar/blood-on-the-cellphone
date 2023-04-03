@@ -1,23 +1,17 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { useLoaderData, Link, Form } from "@remix-run/react";
 import { FaMobileAlt } from "react-icons/fa";
-import { requireMemberId, getMemberId } from "~/memberSession.server";
+import { requireMember, getMemberId } from "~/memberSession.server";
 import { json, redirect } from "@remix-run/node";
 import { getUpcomingInvitations, getMemberById } from "~/models/member.server";
 import parseISO from "date-fns/parseISO";
 import intlFormat from "date-fns/intlFormat";
-import { useUser } from "~/utils";
+import { useUser, formatEventDateForList } from "~/utils";
 import { InvitationListItem } from "~/components/invitation_list_item";
 
 export async function loader({ request }: LoaderArgs) {
-  await requireMemberId(request);
-
-  const memberId = await getMemberId(request);
-
-  if (!memberId) throw redirect("/");
-
-  const upcomingInvitations = await getUpcomingInvitations(memberId);
-  const member = await getMemberById(memberId);
+  const member = await requireMember(request);
+  const upcomingInvitations = await getUpcomingInvitations(member.id);
 
   return {
     member,
@@ -62,14 +56,7 @@ export default function MemberDashboard() {
               >
                 <div>
                   {invitation.event.schedule.title} @{" "}
-                  {intlFormat(parseISO(invitation.event.dateTime), {
-                    weekday: "short",
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                  })}
+                  {formatEventDateForList(invitation.event.dateTime)}
                 </div>
               </Link>
             </li>

@@ -21,7 +21,7 @@ export async function loader({ request, params }: LoaderArgs) {
 
   const invitation = await getInvitation(invitationId);
 
-  if (!invitation) throw redirect("/");
+  if (!invitation) throw redirect("/member");
 
   return invitation;
 }
@@ -29,18 +29,23 @@ export async function loader({ request, params }: LoaderArgs) {
 export default function MemberInvitationIdRoute() {
   const invitation = useLoaderData<typeof loader>();
   const transition = useTransition();
-  const numberOfGuests = invitation.guests ? invitation.guests : 0;
 
   const [isEditing, setIsEditing] = useState(false);
-  const [answer, setAnswer] = useState("RESPONDED_MAYBE");
+  const [guestsInput, setGuestsInput] = useState(
+    invitation.guests ? invitation.guests : 0
+  );
 
-  function handleAnswerChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setAnswer(e.target.value);
+  function handleGuestsInput(direction: string) {
+    if (direction === "up" && guestsInput < 10) {
+      setGuestsInput(guestsInput + 1);
+    } else if (direction === "down" && guestsInput > 0) {
+      setGuestsInput(guestsInput - 1);
+    }
   }
 
   return (
     <div className="mx-auto max-w-screen-md space-y-8 py-8">
-      <Link className="text-blue-600 underline" to="/dashboard">
+      <Link className="text-blue-600 underline" to="/member">
         Back
       </Link>
 
@@ -94,19 +99,11 @@ export default function MemberInvitationIdRoute() {
               disabled={transition.state === "submitting"}
               onClick={() => setIsEditing(true)}
             >
-              Update RSVP
+              {invitation.status === "SENT" ? "RSVP" : "Update RSVP"}
             </button>
           )}
           {isEditing && (
-            <Form
-              action={`/member/${invitation.id}/update`}
-              method="post"
-              onSubmit={(e) => {
-                if (!confirm("Update Your RSVP?")) {
-                  e.preventDefault();
-                }
-              }}
-            >
+            <Form action={`/member/${invitation.id}/update`} method="post">
               <fieldset>
                 <legend>Will You Be Attending This Event?</legend>
                 <input
@@ -114,8 +111,7 @@ export default function MemberInvitationIdRoute() {
                   id="yes-option"
                   name="answer"
                   value="RESPONDED_YES"
-                  checked={answer === "RESPONDED_YES"}
-                  onChange={handleAnswerChange}
+                  defaultChecked={invitation.status === "RESPONDED_YES"}
                 />
                 <label htmlFor="yes-option">Yes</label>
 
@@ -124,8 +120,7 @@ export default function MemberInvitationIdRoute() {
                   id="no-option"
                   name="answer"
                   value="RESPONDED_NO"
-                  checked={answer === "RESPONDED_NO"}
-                  onChange={handleAnswerChange}
+                  defaultChecked={invitation.status === "RESPONDED_NO"}
                 />
                 <label htmlFor="no-option">No</label>
 
@@ -134,21 +129,44 @@ export default function MemberInvitationIdRoute() {
                   id="maybe-option"
                   name="answer"
                   value="RESPONDED_MAYBE"
-                  checked={answer === "RESPONDED_MAYBE"}
-                  onChange={handleAnswerChange}
+                  defaultChecked={invitation.status === "RESPONDED_MAYBE"}
                 />
                 <label htmlFor="maybe-option">Maybe</label>
               </fieldset>
               <div>
-                <label>
+                <label htmlFor="guests-input">
                   How many additional guests will you bring?
+                </label>
+              </div>
+              <div>
+                <div className="flex flex-row">
+                  <button
+                    type="button"
+                    className="rounded-l bg-slate-400 py-2 px-4 font-bold text-white"
+                    onClick={() => handleGuestsInput("down")}
+                  >
+                    -
+                  </button>
+                  <div className="w-12 border py-2 px-4 text-center">
+                    {guestsInput}
+                  </div>
                   <input
+                    hidden
+                    id="guests-input"
                     type="number"
                     name="guests"
                     min="0"
-                    defaultValue={numberOfGuests}
+                    value={guestsInput}
+                    disabled
                   />
-                </label>
+                  <button
+                    type="button"
+                    className="rounded-r bg-slate-400 py-2 px-4 font-bold text-white"
+                    onClick={() => handleGuestsInput("up")}
+                  >
+                    +
+                  </button>
+                </div>
               </div>
               <button
                 aria-describedby="send-invites-description"
