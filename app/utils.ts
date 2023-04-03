@@ -73,7 +73,7 @@ export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
 
-export function generateToken(){
+export function generateToken() {
   const length = 24;
   return crypto.randomBytes(Math.ceil(length/2)).toString("hex");
 }

@@ -55,7 +55,7 @@ async function seed() {
     data: {
       phoneNumber: "+15058143896",
       name: "Adrian",
-      token: generateToken()
+      token: generateToken(),
     },
   });
 

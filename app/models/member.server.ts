@@ -48,8 +48,8 @@ export async function getAllActiveMembers() {
   return prisma.member.findMany();
 }
 
-export async function getMemberById(id: Member["id"]){
-  return prisma.member.findUnique({where: {id}})
+export async function getMemberById(id: Member["id"]) {
+  return prisma.member.findUnique({ where: { id } });
 }
 
 export async function getMemberByToken(token: string) {
@@ -57,4 +57,3 @@ export async function getMemberByToken(token: string) {
     where: { token },
   });
 }
-

@@ -21,7 +21,11 @@ export async function approveMembershipRequest(request: MembershipRequest) {
     invariant(request.name, "Only requests with names can be approved");
 
     const member = await prisma.member.create({
-      data: { phoneNumber: request.phoneNumber, name: request.name, token: generateToken() },
+      data: {
+        phoneNumber: request.phoneNumber,
+        name: request.name,
+        token: generateToken(),
+      },
     });
 
     await prisma.membershipRequest.delete({
