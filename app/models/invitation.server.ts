@@ -34,6 +34,16 @@ export async function getInvitation(id: Invitation["id"] ){
   })
 }
 
+export async function updateInvitation(id: Invitation["id"], status: string, guests: number ){
+  return prisma.invitation.update({
+    where: {id},
+    data: {
+      status: status,
+      guests: guests
+    }
+  })
+}
+
 export async function recordResponse({
   invitationId,
   response,

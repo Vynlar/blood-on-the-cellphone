@@ -8,7 +8,7 @@ import format from "date-fns/format";
 import formatDistance from "date-fns/formatDistance";
 import { FaQuestion, FaCheck, FaExclamation } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export async function loader({ request, params }: LoaderArgs) {
   await requireMemberId(request);
@@ -34,6 +34,13 @@ export default function MemberInvitationIdRoute() {
   const [guestsInput, setGuestsInput] = useState(
     invitation.guests ? invitation.guests : 0
   );
+  const [yesIsChecked, setYesIsChecked] = useState(() => {
+    if (invitation.status === "RESPONDED_YES") {
+      return true;
+    } else {
+      return false;
+    }
+  });
 
   function handleGuestsInput(direction: string) {
     if (direction === "up" && guestsInput < 10) {
@@ -41,6 +48,16 @@ export default function MemberInvitationIdRoute() {
     } else if (direction === "down" && guestsInput > 0) {
       setGuestsInput(guestsInput - 1);
     }
+  }
+
+  function handleRadioSelection(selectedOption: string) {
+    if (selectedOption === "yes") {
+      setYesIsChecked(true);
+    } else {
+      setYesIsChecked(false);
+      setGuestsInput(0);
+    }
+    setGuestsInput(0);
   }
 
   return (
@@ -99,75 +116,85 @@ export default function MemberInvitationIdRoute() {
               disabled={transition.state === "submitting"}
               onClick={() => setIsEditing(true)}
             >
-              {invitation.status === "SENT" ? "RSVP" : "Update RSVP"}
+              {invitation.status === "SENT" ? "Respond" : "Update RSVP"}
             </button>
           )}
           {isEditing && (
-            <Form action={`/member/${invitation.id}/update`} method="post">
+            <Form
+              action={`/member/invites/${invitation.id}/update`}
+              method="post"
+              onSubmit={() => setIsEditing(false)}
+            >
               <fieldset>
                 <legend>Will You Be Attending This Event?</legend>
                 <input
                   type="radio"
                   id="yes-option"
-                  name="answer"
+                  name="status"
                   value="RESPONDED_YES"
                   defaultChecked={invitation.status === "RESPONDED_YES"}
+                  onClick={() => handleRadioSelection("yes")}
                 />
                 <label htmlFor="yes-option">Yes</label>
 
                 <input
                   type="radio"
                   id="no-option"
-                  name="answer"
+                  name="status"
                   value="RESPONDED_NO"
                   defaultChecked={invitation.status === "RESPONDED_NO"}
+                  onClick={() => handleRadioSelection("no")}
                 />
                 <label htmlFor="no-option">No</label>
 
                 <input
                   type="radio"
                   id="maybe-option"
-                  name="answer"
+                  name="status"
                   value="RESPONDED_MAYBE"
                   defaultChecked={invitation.status === "RESPONDED_MAYBE"}
+                  onClick={() => handleRadioSelection("maybe")}
                 />
                 <label htmlFor="maybe-option">Maybe</label>
               </fieldset>
-              <div>
-                <label htmlFor="guests-input">
-                  How many additional guests will you bring?
-                </label>
-              </div>
-              <div>
-                <div className="flex flex-row">
-                  <button
-                    type="button"
-                    className="rounded-l bg-slate-400 py-2 px-4 font-bold text-white"
-                    onClick={() => handleGuestsInput("down")}
-                  >
-                    -
-                  </button>
-                  <div className="w-12 border py-2 px-4 text-center">
-                    {guestsInput}
+              {yesIsChecked && (
+                <div>
+                  <div>
+                    <label htmlFor="guests-input">
+                      How many additional guests will you bring?
+                    </label>
                   </div>
-                  <input
-                    hidden
-                    id="guests-input"
-                    type="number"
-                    name="guests"
-                    min="0"
-                    value={guestsInput}
-                    disabled
-                  />
-                  <button
-                    type="button"
-                    className="rounded-r bg-slate-400 py-2 px-4 font-bold text-white"
-                    onClick={() => handleGuestsInput("up")}
-                  >
-                    +
-                  </button>
+                  <div>
+                    <div className="flex flex-row">
+                      <button
+                        type="button"
+                        className="rounded-l bg-slate-400 py-2 px-4 font-bold text-white"
+                        onClick={() => handleGuestsInput("down")}
+                      >
+                        -
+                      </button>
+                      <div className="w-12 border py-2 px-4 text-center">
+                        {guestsInput}
+                      </div>
+                      <input
+                        hidden
+                        id="guests-input"
+                        type="number"
+                        name="guests"
+                        min="0"
+                        value={guestsInput}
+                      />
+                      <button
+                        type="button"
+                        className="rounded-r bg-slate-400 py-2 px-4 font-bold text-white"
+                        onClick={() => handleGuestsInput("up")}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
               <button
                 aria-describedby="send-invites-description"
                 className="rounded bg-green-600 py-2 px-4 font-bold text-white"
