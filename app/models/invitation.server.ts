@@ -17,6 +17,33 @@ export async function getAllInvitations() {
   });
 }
 
+export async function getInvitation(id: Invitation["id"] ){
+  return prisma.invitation.findUnique({
+    where: {id},
+    include: {
+      event: {
+        include: {
+          schedule: {
+            select: {
+              title: true
+            }
+          }
+        }
+      }
+    }
+  })
+}
+
+export async function updateInvitation(id: Invitation["id"], status: string, guests: number ){
+  return prisma.invitation.update({
+    where: {id},
+    data: {
+      status: status,
+      guests: guests
+    }
+  })
+}
+
 export async function recordResponse({
   invitationId,
   response,

@@ -1,6 +1,8 @@
 import { useMatches } from "@remix-run/react";
 import { useMemo } from "react";
 import crypto from "crypto";
+import parseISO from "date-fns/parseISO";
+import intlFormat from "date-fns/intlFormat";
 
 import type { User } from "~/models/user.server";
 
@@ -73,5 +75,16 @@ export function validateEmail(email: unknown): email is string {
 
 export function generateToken() {
   const length = 24;
-  return crypto.randomBytes(Math.ceil(length / 2)).toString("hex");
+  return crypto.randomBytes(Math.ceil(length/2)).toString("hex");
 }
+
+export function formatEventDateForList(dateTime: string){
+  return intlFormat(parseISO(dateTime), {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  })}
+

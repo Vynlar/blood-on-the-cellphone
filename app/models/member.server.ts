@@ -11,10 +11,38 @@ export function getMemberByPhoneNumber(phoneNumber: string) {
 
 export async function getLatestInvitation(memberId: Member["id"]) {
   return prisma.invitation.findFirst({
-    where: { memberId },
+    where: {memberId},
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function getUpcomingInvitations(memberId: Member["id"]){
+  return prisma.invitation.findMany({
+    where: {
+      AND:[
+        {memberId},
+        {event:{
+          dateTime: {
+            gt: new Date(),
+          }
+        }}
+      ]
+    },
+    include: {
+      event: {
+        include: {
+          schedule: {
+            select: {
+              title: true
+            }
+          }
+        }
+      }
+
+    }
+  })
+}
+
 
 export async function getAllActiveMembers() {
   return prisma.member.findMany();
