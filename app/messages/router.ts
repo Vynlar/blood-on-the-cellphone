@@ -29,6 +29,23 @@ export async function handleMessage(fromNumber: string, message: string) {
     };
   }
 
+  switch (message.trim().toLowerCase()) {
+    case "help":
+      return {
+        response:
+          "Respond with any of the following commands: HELP, INVITATIONS",
+      };
+
+    case "invitations":
+      return {
+        response:
+          "To view or update invitations and RSVPs, use this link: " +
+          process.env.HOST_NAME +
+          "/memberLogin?token=" +
+          member.token,
+      };
+  }
+
   const latestInvite = await getLatestInvitation(member.id);
 
   if (latestInvite) {
@@ -56,7 +73,7 @@ export async function handleMessage(fromNumber: string, message: string) {
         case "MAYBE": {
           await recordResponse({
             invitationId: latestInvite.id,
-            response: "RESPONDED_NO",
+            response: "RESPONDED_MAYBE",
           });
           return {
             response: "We'll follow up with you in a few days.",
@@ -68,14 +85,9 @@ export async function handleMessage(fromNumber: string, message: string) {
           };
         }
       }
-    } else if (
-      latestInvite.status === "RESPONDED_YES" &&
-      latestInvite.guests === null
-    ) {
-      let numGuests: number;
-      try {
-        numGuests = parseInt(message);
-      } catch (e) {
+    } else if (latestInvite.status === "RESPONDED_YES") {
+      const numGuests: number = parseInt(message);
+      if (isNaN(numGuests)) {
         return {
           response: "Please type a number between 1-10",
         };

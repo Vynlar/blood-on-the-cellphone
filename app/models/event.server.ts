@@ -2,6 +2,7 @@ import { prisma } from "~/db.server";
 import { Prisma } from "@prisma/client";
 import type { Schedule } from "@prisma/client";
 import { getAllActiveMembers } from "./member.server";
+import { sendInvite } from "./invitation.server";
 
 // 1: Define a type that includes the relation to `Post`
 const eventWithInvitations = Prisma.validator<Prisma.EventArgs>()({
@@ -117,13 +118,7 @@ export async function sendInvitations({ eventId }: { eventId: Event["id"] }) {
       }
 
       console.debug(`Creating invite for ${member.phoneNumber} (${member.id})`);
-      return prisma.invitation.create({
-        data: {
-          status: "SENT",
-          eventId,
-          memberId: member.id,
-        },
-      });
+      return sendInvite({ memberId: member.id, eventId });
 
       // send a text
       // If there's an issue with sending, delete the invite
@@ -136,6 +131,8 @@ export async function sendInvitations({ eventId }: { eventId: Event["id"] }) {
     }
     return [];
   });
+
+  console.error(`Failed to create some invites.`, failures);
 
   return failures;
 }

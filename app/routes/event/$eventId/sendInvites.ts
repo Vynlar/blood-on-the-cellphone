@@ -16,7 +16,6 @@ export async function action({ request, params }: ActionArgs) {
   invariant(eventId, "Event id is required");
 
   const failures = await sendInvitations({ eventId });
-  console.log(failures);
 
   return redirect("/event/" + eventId);
 }

@@ -1,5 +1,5 @@
 import { prisma } from "~/db.server";
-import type { Invitation } from "@prisma/client";
+import type { Member, Event, Invitation } from "@prisma/client";
 
 export type { Invitation } from "@prisma/client";
 
@@ -70,6 +70,22 @@ export async function recordGuests({
     where: { id: invitationId },
     data: {
       guests: numGuests,
+    },
+  });
+}
+
+export async function sendInvite({
+  eventId,
+  memberId,
+}: {
+  eventId: Event["id"];
+  memberId: Member["id"];
+}) {
+  return prisma.invitation.create({
+    data: {
+      status: "SENT",
+      eventId,
+      memberId,
     },
   });
 }
